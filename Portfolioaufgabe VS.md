@@ -1,3 +1,6 @@
+---
+"toc: true":
+---
 # Verteilte Systeme Portfolio Aufgabe
 ## Aufgabe 1: Architektur verteilter Systeme
 ### (a) 
