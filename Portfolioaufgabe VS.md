@@ -5,45 +5,57 @@
 ## Aufgabe 1: Architektur verteilter Systeme
 ### (a) 
 ```mermaid
-%%{init: { "theme": "default", "themeVariables": { "fontSize": "14px" }}}%%
-%%{init: { "sequence": { "arrowEnd: "normal" }}}%%
-%%{init: { "sequence": { "width": 100, "height": 100 }}}%%
+sequenceDiagram
+    participant Kund*in
+    participant Kassierer*in
+    participant Barista
 
-	sequenceDiagram
-		participant Customer
-		participant Cashier
-		participant Barista
-		Customer ->> Cashier: Bestellung aufgeben
-		activate Cashier
-		Note over Cashier: Bestellung aufnehmen
-		Cashier ->> Barista: Bestellung weiterleiten
-		activate Barista
-		Note over Barista: Kaffee zubereiten
-		Barista ->> Barista: Kaffee zubereiten
-		alt Zeit erforderlich
-			Barista -->> Cashier: Fertigmeldung
-			Cashier -->> Customer: Benachrichtigung, dass der Kaffee fertig ist
-		else Keine Zeit erforderlich
-			Barista -->> Customer: Benachrichtigung, dass der Kaffee fertig ist
-		end
-		deactivate Barista
-		Cashier -->> Customer: Kaffee übergeben
-		deactivate Cashier
+    Kund*in->>Kassierer*in: Bestellung: "Ein Kaffee, bitte."
+    activate Kassierer*in
+    Kassierer*in->>Barista: Bestellung weiterleiten: "Ein Kaffee, bitte."
+    activate Barista
+    Barista-->>Kassierer*in: Bestellung erhalten: "Ein Kaffee, bitte."
+    deactivate Barista
+    Kassierer*in-->>Kund*in: Bestätigung: "Ihre Bestellung wird vorbereitet."
+    deactivate Kassierer*in
+    Kund*in->>Barista: Anfrage: "Ist mein Kaffee fertig?"
+    activate Barista
+    Barista-->>Kund*in: Antwort: "Ja, hier ist Ihr Kaffee."
+    deactivate Barista
+
 ```
-##### Welche Teile des Prozesses laufen synchron und welche asynchron?
-- Synchron: Die Bestellung aufgeben und die Kaffeeübergabe an den Kunden erfolgen synchron. Dies bedeutet, dass der Kunde auf die Bestätigung seiner Bestellung und den Erhalt seines Kaffees wartet.
-- Asynchron: Die Zubereitung des Kaffees ist asynchron, da der Barista den Kaffee vorbereitet, während der Kunde und der Kassierer\*innen andere Aktivitäten ausführen können.
-##### Warum ist der Prozess aus Kundensicht halb-synchron?
-- Aus Kundensicht ist der Prozess halb-synchron, weil der Kunde nach Aufgabe seiner Bestellung und Bezahlung warten muss, bis der Kaffee fertig ist. Der Kunde muss also auf die Fertigstellung des Kaffees warten, bevor er ihn erhält, aber er kann währenddessen andere Aktivitäten ausführen.
-##### Werden die Kaffees immer in der Reihenfolge ihrer Bestellung gemacht?
-- In vielen Fällen werden Kaffees in der Reihenfolge ihrer Bestellung gemacht. Allerdings kann es Ausnahmen geben, wenn bestimmte Bestellungen vorrangig sind oder es durch die Arbeitsschritte von Vorteil wäre.
-##### Wenn nein, wie wird sichergestellt, dass jede/r Kund\*in den richtigen Kaffee erhält?
-- Um sicherzustellen, dass jeder Kunde den richtigen Kaffee erhält, können verschiedene Methoden verwendet werden. Beispielsweise könnten die Kaffees mit Bestellnummern oder Namen versehen werden, um sie den richtigen Kunden zuzuordnen. Ein effizientes Managementsystem könnte auch die Bestellungen und die zugehörigen Kaffees verfolgen, um Verwechslungen zu vermeiden.
-##### Und wie wird sichergestellt, dass jeder Kaffee vor der Abholung bezahlt wurde?
-- Die Bezahlung vor der Abholung des Kaffees kann durch verschiedene Methoden sichergestellt werden, z. B. durch Bezahlung an der Kasse oder durch vorherige Online-Zahlung. Das Kassensystem könnte sicherstellen, dass jeder Kaffee erst herausgegeben wird, wenn er bezahlt wurde. Dies kann auch durch das Vorzeigen eines Zahlungsbelegs oder durch das Scannen eines Codes bestätigt werden, um den abgehenden Kaffee freizugeben.
+##### **Welche Teile des Prozesses laufen synchron und welche asynchron?**
+Die Interaktion zwischen Kund\*in und Kassierer\*in ist synchron, da die Kund*\in auf die Bestätigung ihrer Bestellung durch die Kassierer\*in wartet.
+Die Interaktionen zwischen Kassierer\*in und Barista sind asynchron, da die Kassierer\*in die Bestellung an den Barista weiterleitet und der Barista den Kaffee zubereitet, während die Kund\*in auf die Bestätigung wartet.
+
+##### **Warum ist der Prozess aus Kundensicht halb-synchron?**
+Der Prozess ist halb-synchron, da die Kund\*in auf die Bestätigung ihrer Bestellung durch die Kassierer\*in warten muss, während die Zubereitung des Kaffees durch den Barista asynchron erfolgt.
+  
+##### **Werden die Kaffees immer in der Reihenfolge ihrer Bestellung gemacht?**
+Nein, das Diagramm zeigt nicht explizit, dass die Kaffees in der Reihenfolge ihrer Bestellung gemacht werden. Die Bestellung wird möglicherweise in der Reihenfolge weitergeleitet, in der sie eingegangen ist, aber die Zubereitung kann variieren, je nachdem, wie viel Zeit die Zubereitung des Kaffees benötigt und wie viele Bestellungen gleichzeitig bearbeitet werden.
+
+##### **Wenn nein, wie wird sichergestellt, dass jede/r Kund*in den richtigen Kaffee erhält?**
+Die Kassierer\*in könnte möglicherweise die Bestellung mit einer eindeutigen Kennung versehen und diese Kennung dann an den Barista weitergeben, um sicherzustellen, dass jeder Kaffee der richtigen Bestellung zugeordnet ist.
+
+##### **Und wie wird sichergestellt, dass jeder Kaffee vor der Abholung bezahlt wurde?**
+Dieses Diagramm berücksichtigt nicht explizit den Bezahlvorgang. Es könnte jedoch angenommen werden, dass die Bezahlung entweder vor oder während der Bestellung durchgeführt wird, möglicherweise durch einen separaten Vorgang, der nicht im Diagramm enthalten ist. Alternativ könnte die Bezahlung erfolgen, nachdem die Bestellung durch die Kassierer\*in bestätigt wurde, bevor der Barista mit der Zubereitung beginnt.
 ### (b)
+Mermaid ist eine Text-basierte Diagramm-Syntax, mit der verschiedene Diagrammtypen, einschließlich UML-Sequenzdiagrammen, in Markdown erstellt werden können. Hier ist eine Darstellung des UML-Sequenzdiagramms für den Prozess von der Bestellung bis zum Erhalt des Kaffees:
+
 ```mermaid
+sequenceDiagram
+    participant Kund*in
+    participant Kaffeehaus
+    participant Barista
+
+    Kund*in->>Kaffeehaus: Bestellung: "Ein Kaffee, bitte."
+    Kaffeehaus->>Barista: Bestellung erhalten: "Ein Kaffee, bitte."
+    Barista->>Barista: Kaffee zubereiten
+    Barista->>Barista: Kaffee servieren
+    Barista-->>Kund*in: Kaffee erhalten: "Danke, hier ist mein Kaffee."
 ```
+
+Dieses Diagramm stellt den Prozess dar, wie ein Kaffee von der Bestellung durch den Kunden bis zur Zubereitung und Servierung durch den Barista verläuft. Der Kommunikationsfluss zwischen den Akteuren (Kund\*in, Kaffeehaus und Barista) wird durch Pfeile dargestellt, die die Nachrichtenübermittlung darstellen.
 ### (c)
 In der halb-synchronen Variante des Prozesses können Kassierer\*innen und Baristas unabhängig voneinander horizontal skaliert werden, was bedeutet, dass ihre Anzahl je nach Bedarf erhöht oder verringert werden kann. Dies ist vorteilhaft, weil:
 
@@ -80,10 +92,73 @@ Fehlerhafte Transaktionen im Finanzbereich:
 In diesen Beispielen zeigt sich, wie Unternehmen und Organisationen auf Fehler bei optimistischen Transaktionen reagieren können, indem sie entweder den Fehler abschreiben, ihn erneut versuchen oder eine ausgleichende Maßnahme anbieten, um die Kundenzufriedenheit aufrechtzuerhalten und mögliche Verluste zu minimieren.
 ## Aufgabe 2: Rest-Webservices
 ### (a)
+Der Anwendungsfall besteht darin, dass Benutzer Bankkonten erstellen, Geld einzahlen und Geld abheben können.
+```mermaid
+erDiagram
+    BANK {
+        string bank_id
+        string name
+        string location
+    }
+    ACCOUNT {
+        string account_number
+        string account_type
+        float balance
+        string bank_id
+    }
+    DEPOSIT {
+        string transaction_id
+        float amount
+        datetime timestamp
+        string account_number
+    }
+    
+    BANK ||--o{ ACCOUNT : "besitzt 1 bis viele"
+    ACCOUNT ||--o{ DEPOSIT : "hat 1 bis viele"
+
+```
+
 ### (b)
+
+| Endpunkt                                                | HTTP-Verb | Aktion                      | Beschreibung                                         | JSON-Format Anfrage                              | JSON-Format Antwort                                                                                    |
+| ------------------------------------------------------- | --------- | --------------------------- | ---------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| /banks                                                  | GET       | Alle Banken auflisten       | Ruft alle Banken ab                                  | -                                                | [{ "bank_id": "string", "name": "string", "location": "string" }, ...]                                 |
+| /banks                                                  | POST      | Neue Bank erstellen         | Erstellt eine neue Bank                              | { "name": "string", "location": "string" }       | { "bank_id": "string", "name": "string", "location": "string" }                                        |
+| /banks/{bank_id}                                        | GET       | Bankdetails abrufen         | Ruft die Details einer bestimmten Bank ab            | -                                                | { "bank_id": "string", "name": "string", "location": "string" }                                        |
+| /banks/{bank_id}                                        | PUT       | Bankdetails aktualisieren   | Aktualisiert die Details einer bestimmten Bank       | { "name": "string", "location": "string" }       | { "bank_id": "string", "name": "string", "location": "string" }                                        |
+| /banks/{bank_id}                                        | DELETE    | Bank löschen                | Löscht eine bestimmte Bank                           | -                                                | -                                                                                                      |
+| /banks/{bank_id}/accounts                               | GET       | Konten einer Bank auflisten | Ruft alle Konten einer bestimmten Bank ab            | -                                                | [{ "account_number": "string", "account_type": "string", "balance": "float" }, ...]                    |
+| /banks/{bank_id}/accounts                               | POST      | Neues Konto erstellen       | Erstellt ein neues Konto für eine bestimmte Bank     | { "account_type": "string", "balance": "float" } | { "account_number": "string", "account_type": "string", "balance": "float", "bank_id": "string" }      |
+| /banks/{bank_id}/accounts/<br>{account_number}          | GET       | Kontodetails abrufen        | Ruft die Details eines bestimmten Kontos ab          | -                                                | { "account_number": "string", "account_type": "string", "balance": "float", "bank_id": "string" }      |
+| /banks/{bank_id}/accounts/<br>{account_number}          | PUT       | Kontodetails aktualisieren  | Aktualisiert die Details eines bestimmten Kontos     | { "account_type": "string", "balance": "float" } | { "account_number": "string", "account_type": "string", "balance": "float", "bank_id": "string" }      |
+| /banks/{bank_id}/accounts/<br>{account_number}          | DELETE    | Konto löschen               | Löscht ein bestimmtes Konto                          | -                                                | -                                                                                                      |
+| /banks/{bank_id}/accounts/<br>{account_number}/deposits | POST      | Einzahlung tätigen          | Führt eine Einzahlung auf ein bestimmtes Konto durch | { "amount": "float" }                            | { "transaction_id": "string", "amount": "float", "timestamp": "datetime", "account_number": "string" } |
+
 ## Aufgabe 3: Asynchroner Nachrichtenaustausch
 ### (a)
 ### (b)
+```mermaid
+graph TD
+    A((Node 1 - Kafka Producer)) -->|Daten schreiben| B((Kafka Cluster))
+    B -->|Daten kopieren| C((Node 2))
+    B -->|Daten kopieren| D((Node 3))
+    C -->|Daten lesen| B
+    D -->|Daten lesen| B
+```
+
+Der typische Ablauf bei Änderung eines Werts durch einen der Knoten, während einer der anderen Knoten temporär nicht erreichbar ist und später wieder online ist, könnte folgendermaßen aussehen:
+
+1. **Initialer Zustand**: Alle drei Knoten (Node 1, Node 2 und Node 3) sind online und miteinander verbunden. Das Kafka-Cluster (Node B) fungiert als zentraler Punkt für die Datenreplikation.
+
+2. **Änderung des Werts durch einen Knoten**: Angenommen, Node 1 ändert einen Wert und schreibt diese Änderung in das Kafka-Cluster (Node B). Das Kafka-Cluster repliziert die Änderung auf Node 2 und Node 3.
+
+3. **Einer der Knoten wird temporär nicht erreichbar**: Nehmen wir an, Node 3 ist vorübergehend nicht erreichbar, sei es aufgrund eines Netzwerkproblems oder einer anderen Art von Ausfall. Während Node 3 offline ist, können keine Aktualisierungen auf diesem Knoten durchgeführt werden.
+
+4. **Wiederherstellung des offline Knotens**: Zu einem späteren Zeitpunkt wird Node 3 wieder online. Da Kafka die Änderungen im Commit-Log speichert, kann Node 3 die fehlenden Aktualisierungen durch erneutes Lesen des Logs von Node B abrufen. Node 3 synchronisiert sich mit Node B, um sicherzustellen, dass es die neuesten Daten hat.
+
+5. **Replikation der fehlenden Änderungen**: Das Kafka-Cluster (Node B) erkennt, dass Node 3 fehlende Aktualisierungen hat, und repliziert die fehlenden Daten von Node 1 oder Node 2 auf Node 3, um sicherzustellen, dass alle Knoten konsistente Daten haben.
+
+Durch diese Vorgehensweise gewährleistet das Kafka-Cluster die Konsistenz der Daten, auch wenn temporäre Ausfälle einzelner Knoten auftreten.
 ## Aufgabe 4: Wahlvertiefungen
 ### OpenAPI
 OpenAPI ist eine Spezifikation, die verwendet wird, um RESTful APIs zu definieren. Es bietet eine standardisierte Möglichkeit, APIs zu beschreiben, einschließlich der Endpunkte, der verfügbaren Operationen (wie GET, POST, PUT, DELETE), der erforderlichen Parameter und der erzeugten Antworten. OpenAPI ermöglicht es Entwicklern, APIs zu verstehen und zu nutzen, ohne detaillierte technische Kenntnisse über die zugrunde liegende Implementierung zu benötigen. Es fördert die Interoperabilität zwischen verschiedenen Systemen, da es einen einheitlichen Ansatz für die Dokumentation und Nutzung von APIs bietet.
