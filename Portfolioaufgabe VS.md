@@ -2,6 +2,8 @@
 "toc: true":
 ---
 # Verteilte Systeme Portfolio Aufgabe
+Tim Paschke
+Matrikelnummer: 5939488
 ## Aufgabe 1: Architektur verteilter Systeme
 ### (a) 
 ```mermaid
@@ -34,7 +36,7 @@ Der Prozess ist halb-synchron, da die Kund\*in auf die Bestätigung ihrer Bestel
 ##### **Werden die Kaffees immer in der Reihenfolge ihrer Bestellung gemacht?**
 Nein, das Diagramm zeigt nicht explizit, dass die Kaffees in der Reihenfolge ihrer Bestellung gemacht werden. Die Bestellung wird möglicherweise in der Reihenfolge weitergeleitet, in der sie eingegangen ist, aber die Zubereitung kann variieren, je nachdem, wie viel Zeit die Zubereitung des Kaffees benötigt und wie viele Bestellungen gleichzeitig bearbeitet werden.
 
-##### **Wenn nein, wie wird sichergestellt, dass jede/r Kund*in den richtigen Kaffee erhält?**
+##### **Wenn nein, wie wird sichergestellt, dass jede/r Kund*\in den richtigen Kaffee erhält?**
 Die Kassierer\*in könnte möglicherweise die Bestellung mit einer eindeutigen Kennung versehen und diese Kennung dann an den Barista weitergeben, um sicherzustellen, dass jeder Kaffee der richtigen Bestellung zugeordnet ist.
 
 ##### **Und wie wird sichergestellt, dass jeder Kaffee vor der Abholung bezahlt wurde?**
@@ -133,9 +135,223 @@ erDiagram
 | /banks/{bank_id}/accounts/<br>{account_number}          | PUT       | Kontodetails aktualisieren  | Aktualisiert die Details eines bestimmten Kontos     | { "account_type": "string", "balance": "float" } | { "account_number": "string", "account_type": "string", "balance": "float", "bank_id": "string" }      |
 | /banks/{bank_id}/accounts/<br>{account_number}          | DELETE    | Konto löschen               | Löscht ein bestimmtes Konto                          | -                                                | -                                                                                                      |
 | /banks/{bank_id}/accounts/<br>{account_number}/deposits | POST      | Einzahlung tätigen          | Führt eine Einzahlung auf ein bestimmtes Konto durch | { "amount": "float" }                            | { "transaction_id": "string", "amount": "float", "timestamp": "datetime", "account_number": "string" } |
+### (c)
 
+```js
+const express = require('express');
+
+const bodyParser = require('body-parser');
+
+const low = require('lowdb');
+
+const FileSync = require('lowdb/adapters/FileSync');
+
+  
+
+const app = express();
+
+const PORT = 3000;
+
+  
+
+// Verbindung zur Datenbank herstellen
+
+const adapter = new FileSync('db.json');
+
+const db = low(adapter);
+
+  
+
+// Datenbank initialisieren (falls noch nicht vorhanden)
+
+db.defaults({ banks: [], accounts: [], deposits: [], withdrawals: [] }).write();
+
+  
+
+app.use(bodyParser.json());
+
+  
+
+// API-Endpunkte für Banken
+
+app.get('/banks', (req, res) => {
+
+	const banks = db.get('banks').value();
+	
+	res.json(banks);
+
+});
+
+  
+
+app.post('/banks', (req, res) => {
+
+	const newBank = req.body;
+	
+	db.get('banks').push(newBank).write();
+	
+	res.json(newBank);
+
+});
+
+  
+
+app.get('/banks/:bank_id', (req, res) => {
+
+	const bank = db.get('banks').find({ bank_id: req.params.bank_id }).value();
+	
+	res.json(bank);
+
+});
+
+  
+
+// Weitere API-Endpunkte für Konten
+
+app.get('/banks/:bank_id/accounts', (req, res) => {
+
+		const accounts = db.get('accounts').filter({ bank_id: req.params.bank_id }).value();
+	
+	res.json(accounts);
+
+});
+
+  
+
+app.post('/banks/:bank_id/accounts', (req, res) => {
+
+	const newAccount = req.body;
+	
+	newAccount.bank_id = req.params.bank_id;
+	
+	db.get('accounts').push(newAccount).write();
+	
+	res.json(newAccount);
+
+});
+
+  
+app.get('/banks/:bank_id/accounts/:account_number', (req, res) => {
+
+	const account = db.get('accounts').find({
+
+		bank_id: req.params.bank_id,
+
+		account_number: req.params.account_number
+
+	}).value();
+
+	res.json(account);
+
+});
+
+  
+
+app.listen(PORT, () => {
+
+	console.log(`Server is running on port ${PORT}`);
+
+});
+```
 ## Aufgabe 3: Asynchroner Nachrichtenaustausch
-### (a)
+### (a) 
+**Empfänger.js**
+```js
+const { kafka, topic } = require('./Gemeinsam');
+
+  
+
+const consumer = kafka.consumer({ groupId: 'test-group' });
+
+  
+
+const run = async () => {
+
+	await consumer.connect();
+
+	await consumer.subscribe({ topic: topic, fromBeginning: true });
+
+  
+
+	await consumer.run({
+
+		eachMessage: async ({ topic, partition, message }) => {
+		
+			const value = JSON.parse(message.value.toString());
+		
+			console.log('Received message:', value);
+
+		},
+
+	});
+
+};
+
+  
+
+run().catch(console.error);
+```
+
+**Sender.js**
+```js
+const readlineSync = require('readline-sync');
+
+const { kafka, topic } = require('./Gemeinsam');
+
+const producer = kafka.producer();
+
+  
+const run = async () => {
+
+	await producer.connect();
+
+	const interpret = readlineSync.question('Interpret: ');
+	
+	const titel = readlineSync.question('Titel: ');
+	
+	const spielzeit = parseFloat(readlineSync.question('Spielzeit in Sekunden: '));
+
+	const message = {
+	
+		Interpret: interpret,
+		
+		Titel: titel,
+		
+		Spielzeit: spielzeit
+	
+	};
+
+	await producer.send({
+	
+		topic: topic,
+	
+		messages: [{ value: JSON.stringify(message) }]
+	
+	});
+	
+	await producer.disconnect();
+
+};
+
+run().catch(console.error);
+```
+
+**Gemeinsam.js**
+```js
+const { Kafka } = require('kafkajs');
+
+const kafka = new Kafka({
+
+	clientId: 'my-app',
+
+	brokers: ['zimolong.eu:9092']
+
+});
+
+const topic = 'WWI22B4.PaschkeTim.Aufgabenblatt';
+ 
+module.exports = { kafka, topic };
+```
 ### (b)
 ```mermaid
 graph TD

@@ -1,9 +1,8 @@
 const readlineSync = require('readline-sync');
 const { kafka, topic } = require('./Gemeinsam');
-
 const producer = kafka.producer();
 
-const run = async () => {
+const senden = async () => {
   await producer.connect();
 
   const interpret = readlineSync.question('Interpret: ');
@@ -21,7 +20,9 @@ const run = async () => {
     messages: [{ value: JSON.stringify(message) }]
   });
 
+  console.log("Daten übermittelt!")
+
   await producer.disconnect();
 };
 
-run().catch(console.error);
+senden().catch(console.error);

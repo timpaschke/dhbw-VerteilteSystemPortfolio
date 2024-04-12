@@ -1,0 +1,35 @@
+{
+    "banks": [
+      {
+        "bank_id": "1",
+        "name": "Volksbank",
+        "location": "Heidelberg"
+      },
+      {
+        "bank_id": "2",
+        "name": "Sparkasse",
+        "location": "Karlsruhe"
+      }
+    ],
+    "accounts": [
+      {
+        "bank_id": "1",
+        "account_number": "1001",
+        "owner_name": "John Doe",
+        "balance": 5000
+      },
+      {
+        "bank_id": "1",
+        "account_number": "1002",
+        "owner_name": "Jane Smith",
+        "balance": 3000
+      },
+      {
+        "bank_id": "2",
+        "account_number": "2001",
+        "owner_name": "Alice Johnson",
+        "balance": 10000
+      }
+    ]
+}
+  

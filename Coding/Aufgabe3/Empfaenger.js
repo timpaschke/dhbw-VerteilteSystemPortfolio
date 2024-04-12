@@ -9,7 +9,7 @@ const run = async () => {
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       const value = JSON.parse(message.value.toString());
-      console.log('Received message:', value);
+      console.log('Nachricht erhalten:', value);
     },
   });
 };
