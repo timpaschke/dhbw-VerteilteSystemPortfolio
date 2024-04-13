@@ -42,7 +42,7 @@ Die Kassierer\*in könnte möglicherweise die Bestellung mit einer eindeutigen K
 ##### **Und wie wird sichergestellt, dass jeder Kaffee vor der Abholung bezahlt wurde?**
 Dieses Diagramm berücksichtigt nicht explizit den Bezahlvorgang. Es könnte jedoch angenommen werden, dass die Bezahlung entweder vor oder während der Bestellung durchgeführt wird, möglicherweise durch einen separaten Vorgang, der nicht im Diagramm enthalten ist. Alternativ könnte die Bezahlung erfolgen, nachdem die Bestellung durch die Kassierer\*in bestätigt wurde, bevor der Barista mit der Zubereitung beginnt.
 ### (b)
-Mermaid ist eine Text-basierte Diagramm-Syntax, mit der verschiedene Diagrammtypen, einschließlich UML-Sequenzdiagrammen, in Markdown erstellt werden können. Hier ist eine Darstellung des UML-Sequenzdiagramms für den Prozess von der Bestellung bis zum Erhalt des Kaffees:
+
 
 ```mermaid
 sequenceDiagram
@@ -57,7 +57,6 @@ sequenceDiagram
     Barista-->>Kund*in: Kaffee erhalten: "Danke, hier ist mein Kaffee."
 ```
 
-Dieses Diagramm stellt den Prozess dar, wie ein Kaffee von der Bestellung durch den Kunden bis zur Zubereitung und Servierung durch den Barista verläuft. Der Kommunikationsfluss zwischen den Akteuren (Kund\*in, Kaffeehaus und Barista) wird durch Pfeile dargestellt, die die Nachrichtenübermittlung darstellen.
 ### (c)
 In der halb-synchronen Variante des Prozesses können Kassierer\*innen und Baristas unabhängig voneinander horizontal skaliert werden, was bedeutet, dass ihre Anzahl je nach Bedarf erhöht oder verringert werden kann. Dies ist vorteilhaft, weil:
 
@@ -90,8 +89,6 @@ Fehlerhafte Transaktionen im Finanzbereich:
 - Write-Off (Abschreiben): Die Bank könnte die Gebühren für die fehlgeschlagene Transaktion erlassen und den Betrag zurückerstatten.
 - Retry (Wiederholen): Die Bank könnte versuchen, die Überweisung erneut durchzuführen, um sicherzustellen, dass sie erfolgreich ist.
 - Compensating Action (Ausgleichende Maßnahme): Die Bank könnte Ihnen einen kleinen Bonus für die Unannehmlichkeiten anbieten oder die Transaktionsgebühren für eine gewisse Zeit erlassen.
-
-In diesen Beispielen zeigt sich, wie Unternehmen und Organisationen auf Fehler bei optimistischen Transaktionen reagieren können, indem sie entweder den Fehler abschreiben, ihn erneut versuchen oder eine ausgleichende Maßnahme anbieten, um die Kundenzufriedenheit aufrechtzuerhalten und mögliche Verluste zu minimieren.
 ## Aufgabe 2: Rest-Webservices
 ### (a)
 Der Anwendungsfall besteht darin, dass Benutzer Bankkonten erstellen, Geld einzahlen und Geld abheben können.
@@ -115,26 +112,16 @@ erDiagram
         string account_number
     }
     
-    BANK ||--o{ ACCOUNT : "besitzt 1 bis viele"
-    ACCOUNT ||--o{ DEPOSIT : "hat 1 bis viele"
+    BANK ||--o{ ACCOUNT : "besitzt 1 bis n"
+    ACCOUNT ||--o{ DEPOSIT : "besitzt 1 bis n"
 
 ```
 
 ### (b)
+![[Pasted image 20240413115023.png]]
 
-| Endpunkt                                                | HTTP-Verb | Aktion                      | Beschreibung                                         | JSON-Format Anfrage                              | JSON-Format Antwort                                                                                    |
-| ------------------------------------------------------- | --------- | --------------------------- | ---------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| /banks                                                  | GET       | Alle Banken auflisten       | Ruft alle Banken ab                                  | -                                                | [{ "bank_id": "string", "name": "string", "location": "string" }, ...]                                 |
-| /banks                                                  | POST      | Neue Bank erstellen         | Erstellt eine neue Bank                              | { "name": "string", "location": "string" }       | { "bank_id": "string", "name": "string", "location": "string" }                                        |
-| /banks/{bank_id}                                        | GET       | Bankdetails abrufen         | Ruft die Details einer bestimmten Bank ab            | -                                                | { "bank_id": "string", "name": "string", "location": "string" }                                        |
-| /banks/{bank_id}                                        | PUT       | Bankdetails aktualisieren   | Aktualisiert die Details einer bestimmten Bank       | { "name": "string", "location": "string" }       | { "bank_id": "string", "name": "string", "location": "string" }                                        |
-| /banks/{bank_id}                                        | DELETE    | Bank löschen                | Löscht eine bestimmte Bank                           | -                                                | -                                                                                                      |
-| /banks/{bank_id}/accounts                               | GET       | Konten einer Bank auflisten | Ruft alle Konten einer bestimmten Bank ab            | -                                                | [{ "account_number": "string", "account_type": "string", "balance": "float" }, ...]                    |
-| /banks/{bank_id}/accounts                               | POST      | Neues Konto erstellen       | Erstellt ein neues Konto für eine bestimmte Bank     | { "account_type": "string", "balance": "float" } | { "account_number": "string", "account_type": "string", "balance": "float", "bank_id": "string" }      |
-| /banks/{bank_id}/accounts/<br>{account_number}          | GET       | Kontodetails abrufen        | Ruft die Details eines bestimmten Kontos ab          | -                                                | { "account_number": "string", "account_type": "string", "balance": "float", "bank_id": "string" }      |
-| /banks/{bank_id}/accounts/<br>{account_number}          | PUT       | Kontodetails aktualisieren  | Aktualisiert die Details eines bestimmten Kontos     | { "account_type": "string", "balance": "float" } | { "account_number": "string", "account_type": "string", "balance": "float", "bank_id": "string" }      |
-| /banks/{bank_id}/accounts/<br>{account_number}          | DELETE    | Konto löschen               | Löscht ein bestimmtes Konto                          | -                                                | -                                                                                                      |
-| /banks/{bank_id}/accounts/<br>{account_number}/deposits | POST      | Einzahlung tätigen          | Führt eine Einzahlung auf ein bestimmtes Konto durch | { "amount": "float" }                            | { "transaction_id": "string", "amount": "float", "timestamp": "datetime", "account_number": "string" } |
+
+
 ### (c) 
 siehe **`Bank.js`**
 ## Aufgabe 3: Asynchroner Nachrichtenaustausch
@@ -180,5 +167,3 @@ Durch die Verwendung von OpenAPI hat Twilio eine klare und umfassende Spezifikat
 Die OpenAPI-Spezifikation von Twilio beschreibt alle verfügbaren Endpunkte, wie zum Beispiel `/Messages` für den SMS-Versand oder `/Calls` für Telefonanrufe. Sie definiert auch die erforderlichen Parameter für jede Anfrage, wie z.B. die Telefonnummer des Empfängers für einen Anruf oder den Text einer SMS. Darüber hinaus werden die erwarteten Antworten beschrieben, einschließlich der HTTP-Statuscodes und der Struktur der Antwortnachrichten.
 
 Durch die Verwendung von OpenAPI können Entwickler, die Twilio verwenden möchten, schnell auf die API zugreifen, ohne Zeit mit der manuellen Analyse von Dokumentationen oder der Durchführung von Reverse Engineering zu verschwenden. Dies fördert die Effizienz und Produktivität der Entwickler und ermöglicht es Twilio, eine breitere Palette von Entwicklern anzusprechen, die ihre Kommunikationsfunktionen in ihre Anwendungen integrieren möchten.
-
-Insgesamt zeigt das Beispiel von Twilio, wie OpenAPI dazu beitragen kann, APIs zu standardisieren, die Entwicklung zu beschleunigen und die Interoperabilität zwischen verschiedenen Systemen zu verbessern.
